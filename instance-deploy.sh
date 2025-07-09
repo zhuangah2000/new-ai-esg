@@ -18,4 +18,4 @@ sed -i "s/^DOMAIN=.*/DOMAIN=$INSTANCE.macrovention.com/" $ENV_FILE
 
 mkdir -p $DATA_DIR
 
-docker-compose --env-file $ENV_FILE up -d --build
+docker compose --env-file $ENV_FILE up -d --build
