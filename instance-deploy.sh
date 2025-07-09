@@ -24,7 +24,7 @@ mkdir -p $DATA_DIR
 # 3. Build frontend with correct domain
 echo "🔧 Building frontend with API endpoint: https://$DOMAIN/api"
 cd esg_frontend
-VITE_API_BASE_URL="https://$DOMAIN/api" npm run build
+VITE_API_BASE_URL="http://$DOMAIN/api" npm run build
 cd ..
 
 # 4. Build and start docker
