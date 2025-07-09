@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [sessionReady, setSessionReady] = useState(false);
 
-  const API_BASE_URL = 'http://localhost:5003/api';
+  const API_BASE_URL = 'http://esg-kvc1021.macrovention.com/api';
 
   // Check authentication status
   const checkAuth = async () => {
