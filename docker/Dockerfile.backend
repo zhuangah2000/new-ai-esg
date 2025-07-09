@@ -2,18 +2,21 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install dependencies
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
+# Create folder for DB
 RUN mkdir -p /app/src/database
 
+# Copy backend and frontend
 COPY esg_reporting_api /app
 COPY esg_frontend/dist /app/src/static
 
-RUN python -m venv venv && \
-    . venv/bin/activate && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt
+# Install Python requirements directly (no virtualenv)
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
+# Expose Flask/Gunicorn port
 EXPOSE 5003
 
-CMD ["/app/venv/bin/gunicorn", "--workers", "3", "--bind", "0.0.0.0:5003", "src.main:app"]
+# Start Gunicorn
+CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:5003", "src.main:app"]
