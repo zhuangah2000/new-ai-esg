@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    container_name: ${INSTANCE_ID}-backend
     build:
       context: .
       dockerfile: docker/Dockerfile.backend
