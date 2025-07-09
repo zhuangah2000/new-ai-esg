@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "${API_PORT}:5003"
+    environment:
+      - INSTANCE_ID=${INSTANCE_ID}
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./instance_data/${INSTANCE_ID}/db:/app/src/database
+    restart: always

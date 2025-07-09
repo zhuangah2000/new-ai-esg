@@ -69,7 +69,12 @@ app.register_blueprint(api_key_bp, url_prefix='/api')
 # ============================================================================
 # PRESERVING USER'S EXACT DATABASE CONFIGURATION
 # ============================================================================
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
+# Dynamic DB filename based on INSTANCE_ID
+instance_id = os.environ.get("INSTANCE_ID", "default")
+db_filename = f"app_{instance_id}.db"
+db_path = os.path.join(os.path.dirname(__file__), 'database', db_filename)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 

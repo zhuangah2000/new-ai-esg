@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /app/src/database
+
+COPY esg_reporting_api /app
+COPY esg_frontend/dist /app/src/static
+
+RUN python -m venv venv && \
+    . venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+EXPOSE 5003
+
+CMD ["/app/venv/bin/gunicorn", "--workers", "3", "--bind", "0.0.0.0:5003", "src.main:app"]
