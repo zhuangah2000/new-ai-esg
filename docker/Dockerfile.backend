@@ -2,17 +2,20 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Accept build arg
+ARG INSTANCE_ID
+
 # Install dependencies
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Create folder for DB
 RUN mkdir -p /app/src/database
 
-# Copy backend and frontend
+# Copy backend and instance-specific frontend
 COPY esg_reporting_api /app
 COPY instance_data/${INSTANCE_ID}/dist /app/src/static
 
-# Install Python requirements directly (no virtualenv)
+# Install Python requirements
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Expose Flask/Gunicorn port
