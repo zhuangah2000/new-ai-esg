@@ -70,7 +70,7 @@ app.register_blueprint(api_key_bp, url_prefix='/api')
 # PRESERVING USER'S EXACT DATABASE CONFIGURATION
 # ============================================================================
 # Dynamic DB filename based on INSTANCE_ID
-instance_id = os.environ.get("INSTANCE_ID", "default")
+instance_id = os.environ.get("INSTANCE_ID", "default").replace('-', '_')
 db_filename = f"app_{instance_id}.db"
 db_path = os.path.join(os.path.dirname(__file__), 'database', db_filename)
 
