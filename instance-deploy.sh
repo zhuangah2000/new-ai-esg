@@ -2,7 +2,7 @@
 
 INSTANCE=$1
 PORT=$2
-PROTOCOL=${3:-http}
+PROTOCOL=${3:-http}  # optional third argument: http (default) or https
 
 if [ -z "$INSTANCE" ] || [ -z "$PORT" ]; then
     echo "Usage: ./instance-deploy.sh <instance-id> <api-port> [http|https]"
@@ -15,7 +15,7 @@ DIST_DIR="instance_data/$INSTANCE/dist"
 DOMAIN="$INSTANCE.macrovention.com"
 API_BASE_URL="$PROTOCOL://$DOMAIN/api"
 
-# 1️⃣ Create .env file
+# 1️⃣ Create .env file for this instance
 cp .env-template $ENV_FILE
 sed -i "s/^INSTANCE_ID=.*/INSTANCE_ID=$INSTANCE/" $ENV_FILE
 sed -i "s/^API_PORT=.*/API_PORT=$PORT/" $ENV_FILE
@@ -25,13 +25,14 @@ sed -i "s/^DOMAIN=.*/DOMAIN=$DOMAIN/" $ENV_FILE
 mkdir -p $DATA_DIR
 mkdir -p $DIST_DIR
 
-# 3️⃣ Build frontend
+# 3️⃣ Build frontend (per instance, isolated)
 echo "🔧 Building frontend for $INSTANCE with API_BASE_URL=$API_BASE_URL"
 cd esg_frontend
+rm -rf dist  # clean previous build (if any)
 VITE_API_BASE_URL="$API_BASE_URL" npm run build
 cd ..
 
-# 4️⃣ Copy built frontend to instance folder
+# 4️⃣ Copy built frontend to instance-specific folder
 rm -rf $DIST_DIR
 cp -r esg_frontend/dist $DIST_DIR
 
