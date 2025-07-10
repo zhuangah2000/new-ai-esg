@@ -10,7 +10,7 @@ RUN mkdir -p /app/src/database
 
 # Copy backend and frontend
 COPY esg_reporting_api /app
-COPY esg_frontend/dist /app/src/static
+COPY instance_data/${INSTANCE_ID}/dist /app/src/static
 
 # Install Python requirements directly (no virtualenv)
 RUN pip install --upgrade pip && pip install -r requirements.txt

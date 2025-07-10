@@ -1,11 +1,11 @@
-version: '3.8'
-
 services:
   backend:
     container_name: ${INSTANCE_ID}-backend
     build:
       context: .
       dockerfile: docker/Dockerfile.backend
+      args:
+        INSTANCE_ID: ${INSTANCE_ID}
     ports:
       - "${API_PORT}:5003"
     environment:
