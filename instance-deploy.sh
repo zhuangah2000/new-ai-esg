@@ -14,35 +14,41 @@ DATA_DIR="instance_data/$INSTANCE/db"
 DIST_DIR="instance_data/$INSTANCE/dist"
 DOMAIN="$INSTANCE.macrovention.com"
 API_BASE_URL="$PROTOCOL://$DOMAIN/api"
+DIST_FOLDER="dist-$INSTANCE"
 
-# 1️⃣ Create .env file
+echo "💡 Deploying instance: $INSTANCE"
+echo "🌍 API Base URL: $API_BASE_URL"
+echo "📦 Port: $PORT"
+
+# 1️⃣ Prepare .env file
 cp .env-template $ENV_FILE
 sed -i "s/^INSTANCE_ID=.*/INSTANCE_ID=$INSTANCE/" $ENV_FILE
 sed -i "s/^API_PORT=.*/API_PORT=$PORT/" $ENV_FILE
 sed -i "s/^DOMAIN=.*/DOMAIN=$DOMAIN/" $ENV_FILE
 
-# 2️⃣ Ensure folders exist
+# 2️⃣ Ensure instance folders
 mkdir -p $DATA_DIR
 mkdir -p $DIST_DIR
 
-# 3️⃣ Build frontend (per instance, isolated build folder)
-echo "🔧 Building frontend for $INSTANCE with API_BASE_URL=$API_BASE_URL"
+# 3️⃣ Build frontend with isolated output folder
+echo "🔧 Building frontend for $INSTANCE..."
 cd esg_frontend
-rm -rf dist
-VITE_API_BASE_URL="$API_BASE_URL" npm run build
+rm -rf $DIST_FOLDER
 
-# Rename the build output to avoid conflicts
-mv dist dist-$INSTANCE
+# use OUT_DIR to set vite build output
+OUT_DIR=$DIST_FOLDER VITE_API_BASE_URL="$API_BASE_URL" npx vite build
+
 cd ..
-
-# 4️⃣ Copy frontend to instance_data folder
+# 4️⃣ Copy frontend build to instance_data
 rm -rf $DIST_DIR
-cp -r esg_frontend/dist-$INSTANCE $DIST_DIR
+cp -r esg_frontend/$DIST_FOLDER $DIST_DIR
 
 # 5️⃣ Build Docker image with build arg
-echo "🐳 Building Docker image for $INSTANCE"
+echo "🐳 Building Docker image for $INSTANCE..."
 docker compose --env-file $ENV_FILE build --build-arg INSTANCE_ID=$INSTANCE
 
-# 6️⃣ Start the container
-echo "🚀 Starting Docker container for $INSTANCE"
+# 6️⃣ Start container
+echo "🚀 Starting Docker container for $INSTANCE..."
 docker compose --env-file $ENV_FILE up -d
+
+echo "✅ Deployment finished for $INSTANCE!"
