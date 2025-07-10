@@ -1,6 +1,7 @@
 services:
   backend:
     container_name: ${INSTANCE_ID}-backend
+    image: ${INSTANCE_ID}-image  
     build:
       context: .
       dockerfile: docker/Dockerfile.backend
