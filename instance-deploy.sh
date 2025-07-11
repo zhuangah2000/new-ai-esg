@@ -43,12 +43,12 @@ cd ..
 rm -rf $DIST_DIR
 cp -r esg_frontend/$DIST_FOLDER $DIST_DIR
 
-# 5️⃣ Build Docker image with build arg
+# 5️⃣ Build Docker image with build arg and unique project name
 echo "🐳 Building Docker image for $INSTANCE..."
-docker compose --env-file $ENV_FILE build --build-arg INSTANCE_ID=$INSTANCE
+docker compose -p $INSTANCE --env-file $ENV_FILE build --build-arg INSTANCE_ID=$INSTANCE
 
-# 6️⃣ Start container
+# 6️⃣ Start container in detached mode with unique project
 echo "🚀 Starting Docker container for $INSTANCE..."
-docker compose --env-file $ENV_FILE up -d
+docker compose -p $INSTANCE --env-file $ENV_FILE up -d
 
 echo "✅ Deployment finished for $INSTANCE!"
