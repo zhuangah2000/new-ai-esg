@@ -1,0 +1,51 @@
+# 2. Stop the old containers
+docker compose down
+
+inside esg_frontend
+npm run build 
+
+
+# 1. Rebuild the backend image (to include updated frontend in /app/src/static)
+docker compose build backend
+
+# 3. Restart with new build
+docker compose up -d
+
+(HTTP)
+./instance-deploy.sh esg-kvc1021 5003 &
+./instance-deploy.sh esg-kvc1022 5004 &
+wait
+
+https://esg-kvc1021.macrovention.com/login
+https://esg-kvc1022.macrovention.com/login
+
+(HTTPS)
+./instance-deploy.sh esg-kvc1021 5003 https &
+./instance-deploy.sh esg-kvc1022 5004  https &
+./instance-deploy.sh esg-kvc1023 5005  https &
+./instance-deploy.sh esg-kvc1024 5006  https &
+./instance-deploy.sh esg-kvc1025 5007  https &
+./instance-deploy.sh esg-kvc1026 5008  https &
+./instance-deploy.sh esg-kvc1027 5009  https &
+./instance-deploy.sh esg-kvc1028 5010  https &
+./instance-deploy.sh esg-kvc1029 5011  https &
+./instance-deploy.sh esg-kvc1030 5012  https &
+
+wait
+
+# need to restart docker whenever change db config
+docker restart esg-kvc1021-backend
+
+sudo ln -s /etc/nginx/sites-available/esg-kvc-23-30.conf /etc/nginx/sites-enabled/
+
+
+#copy db to all instance
+cd ~/new-ai-esg/instance_data/esg-kvc1021/db
+
+for i in {1023..1030}; do
+  cp -f app_esg_kvc1021.db ~/new-ai-esg/instance_data/esg-kvc$i/db/app_esg_kvc$i.db
+done
+
+.headers on
+.mode column
+SELECT id, username, email FROM user;
