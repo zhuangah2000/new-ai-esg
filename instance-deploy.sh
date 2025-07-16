@@ -14,7 +14,6 @@ DATA_DIR="instance_data/$INSTANCE/db"
 DIST_DIR="instance_data/$INSTANCE/dist"
 DOMAIN="$INSTANCE.macrovention.com"
 API_BASE_URL="$PROTOCOL://$DOMAIN/api"
-DIST_FOLDER="dist-$INSTANCE"
 
 echo "💡 Deploying instance: $INSTANCE"
 echo "🌍 API Base URL: $API_BASE_URL"
@@ -33,21 +32,10 @@ mkdir -p $DIST_DIR
 # 3️⃣ Build frontend with isolated output folder
 echo "🔧 Building frontend for $INSTANCE..."
 cd esg_frontend
-rm -rf $DIST_FOLDER
-
-# use OUT_DIR to set vite build output
-OUT_DIR=$DIST_FOLDER VITE_API_BASE_URL="$API_BASE_URL" npx vite build
-
+OUT_DIR=../instance_data/$INSTANCE/dist VITE_API_BASE_URL="$API_BASE_URL" npx vite build
 cd ..
-# 4️⃣ Copy frontend build to instance_data
-rm -rf $DIST_DIR
-cp -r esg_frontend/$DIST_FOLDER $DIST_DIR
 
-# 5️⃣ Build Docker image with build arg and unique project name
-echo "🐳 Building Docker image for $INSTANCE..."
-docker compose -p $INSTANCE --env-file $ENV_FILE build --build-arg INSTANCE_ID=$INSTANCE
-
-# 6️⃣ Start container in detached mode with unique project
+# 4️⃣ Start Docker container with shared image
 echo "🚀 Starting Docker container for $INSTANCE..."
 docker compose -p $INSTANCE --env-file $ENV_FILE up -d
 

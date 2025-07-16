@@ -1,12 +1,7 @@
 services:
   backend:
+    image: esg-platform-backend:latest   # Same image for all instances
     container_name: ${INSTANCE_ID}-backend
-    image: ${INSTANCE_ID}-image
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.backend
-      args:
-        INSTANCE_ID: ${INSTANCE_ID}
     ports:
       - "${API_PORT}:5003"
     environment:
@@ -14,4 +9,5 @@ services:
       - DOMAIN=${DOMAIN}
     volumes:
       - ./instance_data/${INSTANCE_ID}/db:/app/src/database
+      - ./instance_data/${INSTANCE_ID}/dist:/app/src/static
     restart: always
